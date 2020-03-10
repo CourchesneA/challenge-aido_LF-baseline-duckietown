@@ -22,6 +22,7 @@ COPY setup/initial.sh duckietown
 COPY setup/run_display.bash duckietown
 RUN chmod u+x duckietown/run_display.bash
 
+
 RUN cd duckietown && ./initial.sh 
 
 RUN echo 'source catkin_ws/devel/setup.bash' >> ~/.bashrc
@@ -29,6 +30,7 @@ RUN echo 'source catkin_ws/devel/setup.bash' >> ~/.bashrc
 RUN echo 'echo if you got a message about "catkin_ws/devel/setup.bash does not exist" then you need to build the catkin_ws with "catkin build --workspace catkin_ws" ' >> ~/.bashrc
 
 ENV ROS_PYTHON_VERSION 3
+# ENV ROS_DISTRO melodic
 ENV SHELL /bin/bash
 ENV DISPLAY :99
 ENV DUCKIEFLEET_ROOT /data/config
@@ -41,6 +43,14 @@ RUN python get-pip.py
 COPY setup/requirementspy2.txt duckietown
 RUN python -m pip install -r duckietown/requirementspy2.txt
 
-WORKDIR /duckietown
-CMD  rm -f /tmp/.X99-lock &&  ./run_display.bash &&  jupyter-notebook --allow-root --ip="*" --no-browser 
+COPY start.sh duckietown
+RUN chmod +x duckietown/start.sh
 
+COPY solution2.py duckietown/solution2.py
+COPY rosagent.py duckietown/rosagent.py
+
+WORKDIR /duckietown
+#CMD  python2 solution2.py && jupyter-notebook --allow-root --ip="*" --no-browser
+#ENTRYPOINT ["/ros_entrypoint.sh","/duckietown/start.sh"]
+ENTRYPOINT ["/ros_entrypoint.sh"]
+CMD ["/duckietown/start.sh"]
