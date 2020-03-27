@@ -4,7 +4,7 @@ services:
         image: duckietown/dt-notebook:daffy
         build:
             context: .
-            dockerfile: Dockerfile
+            dockerfile: DockerfileNB
         working_dir: /duckietown
         networks:
         - duckietown-docker-net
@@ -14,8 +14,9 @@ services:
         - ./catkin_ws:/duckietown/catkin_ws
         - ./utils:/duckietown/utils
         - ./custom:/duckietown/custom
+        - ./sim_ws:/duckietown/sim_ws
+        - ./simulation:/duckietown/simulation
         - /tmp/.X11-unix:/tmp/.X11-unix
-        - ./.fifos:/fifos
         environment:
         - "ROS_MASTER_URI=http://sim:11311"
         - "HOSTNAME=default"
@@ -42,11 +43,15 @@ services:
         - "6901:6901"
 
     sim:
-        image: courchesnea/dt-sim:test
-        volumes:
-          - ./.fifos:/fifos
+        image: duckietown/dt-sim:daffy
+        build:
+            context: .
+            dockerfile: DockerfileSim
         networks:
         - duckietown-docker-net
+        volumes:
+        - ./simulation:/duckietown/simulation
+        - ./utils:/duckietown/utils        
         environment:
         - "ROS_MASTER_URI=http://sim:11311"
         - "HOSTNAME=default"
@@ -55,4 +60,3 @@ services:
 
 networks:
     duckietown-docker-net:
-

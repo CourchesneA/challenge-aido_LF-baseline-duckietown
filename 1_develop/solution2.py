@@ -4,7 +4,9 @@ from __future__ import unicode_literals
 import os
 import time
 
+import argparse
 import numpy as np
+import roslaunch
 from rosagent import ROSAgent
 
 from zuper_nodes_python2 import logger, wrap_direct
@@ -13,19 +15,28 @@ from zuper_nodes_python2 import logger, wrap_direct
 #TODO starting roslaunch should be a switch
 
 class ROSBaselineAgent(object):
-    def __init__(self):
+    def __init__(self, in_sim, launch_file):
         logger.info('started __init__() for ROSBaselineAgent')
         # Now, initialize the ROS stuff here:
 
-        # logger.info('Configuring logging')
-        # uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
-        # roslaunch.configure_logging(uuid)
-        # print('configured logging 2')
+        vehicle_name = os.getenv('VEHICLE_NAME')
 
-        # Disabled, we dont want any launch file
-        #roslaunch_path = os.path.join(os.getcwd(), "lf_slim.launch")
+        roslaunch_path = os.path.join(os.getcwd(), launch_file)
+
+        #if (in_sim):
+        #    roslaunch_path = (os.path.join(os.getcwd(),"empty.launch"),["--wait","veh:{}".format(vehicle_name)])
+        #    logger.info("set launch path to car_interface")
+        #    
+
+        #logger.info('Configuring logging')
+        #uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
+        #roslaunch.configure_logging(uuid)
+        #print('configured logging 2')
+
         #logger.info('Creating ROSLaunchParent')
+        #print("About to launch")
         #self.launch = roslaunch.parent.ROSLaunchParent(uuid, [roslaunch_path])
+        #print("Launched")
 
         #logger.info('about to call start()')
 
@@ -38,6 +49,7 @@ class ROSBaselineAgent(object):
         logger.info('started ROSAgent()')
 
         logger.info('completed __init__()')
+        print("Completed __init__()")
 
     def on_received_seed(self, context, data):
         logger.info('Received seed from pipes')
@@ -94,6 +106,10 @@ def jpg2rgb(image_data):
 
 
 if __name__ == '__main__':
-    agent = ROSBaselineAgent()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-s","--sim", action="store_true", help="Add this option to start the car interface")
+    parser.add_argument("--launch_file",default="lf_slim.launch", help="launch file that should be used (default: lf_slim.launch")
+    args = parser.parse_args()
+    agent = ROSBaselineAgent(in_sim=args.sim, launch_file = args.launch_file)
     wrap_direct(agent)
     logger.info("agent linked to fifos")

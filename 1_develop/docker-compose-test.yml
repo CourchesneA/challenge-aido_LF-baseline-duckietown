@@ -1,0 +1,16 @@
+version: '3'
+services:
+    sim:
+        image: courchesnea/dt-sim:test
+        volumes:
+          - /fifos3:/fifos
+        networks:
+        - duckietown-docker-net
+        environment:
+        - "ROS_MASTER_URI=http://sim:11311"
+        - "HOSTNAME=default"
+        - "VEHICLE_NAME=default"
+        - "DISPLAY=:99"
+
+networks:
+    duckietown-docker-net:

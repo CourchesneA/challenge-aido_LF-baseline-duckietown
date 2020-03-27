@@ -8,15 +8,22 @@ if [ $? -ne 0 ]; then
 fi
 source catkin_ws/devel/setup.bash
 
-echo "starting roscore"
-roscore
+#echo "starting roscore"
+#roscore &
+#if [ $? -ne 0 ]; then
+#  echo "Unable to start roscore, aborting ..."
+#  exit 1
+#fi
+
+echo "starting car interface"
+./launch_car_interface.sh
 if [ $? -ne 0 ]; then
-  echo "Unable to start roscore, aborting ..."
+  echo "error while starting car interface"
   exit 1
 fi
 
 echo "starting ros bridge"
-python2 solution2.py
+python2 solution2.py --sim
 if [ $? -ne 0 ]; then
   echo "Error while running ros bridge, aborting ..."
   exit 1

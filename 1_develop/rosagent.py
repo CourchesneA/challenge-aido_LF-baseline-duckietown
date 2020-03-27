@@ -21,6 +21,7 @@ class ROSAgent(object):
         except BaseException as e:
             logger.info('exception in init_node: %s' % e)
             raise
+        logger.info("ROSagent node initialized")
         
         # Place holder for the action
         self.action = np.array([0.0, 0.0])
